@@ -1,0 +1,16 @@
+
+target = it gives the probability of failure of sys in the next month. if the probability is >0.6 for the 
+        failure, then stop the sys, run a detailed inspection on sys and try to find the bottleneck
+
+inputs = 
+        1. system's current and past activity and behavior
+        2. timelines of failues in the past
+        3. causes of failures in the past
+        4. performace of harware along with system - are they both stable, is one of them unusually high or low ?
+        5. updates in the code (this can lead to security risks if not properly checked)
+        6. is the latency of system >0.1ms
+
+model logic:
+            I assume the inputs are addative + threshold. each of these inputs have a threshold, 
+            if it get's crossed, it's in the danger zone where the system could fail and if multiple 
+            inputs cross the danger zone, it's Dday. stop the sys and find these issues
