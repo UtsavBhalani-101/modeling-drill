@@ -1,0 +1,26 @@
+
+assumption = “Past failure causes are representative of future failures.”
+
+rewritten -
+             > 90% of the future and present failures are caused by same reasons it happened in Past
+
+data -
+        for this assumption I need all the failure_causes that happened in the recorded data that is being
+        fed 
+
+test -
+        take the data of the days when system crashed for the first 100 failures
+        now check if the causes are actually similar or not
+
+        and do the same for the last 100 failures and check if the failure_causes
+        align with the first 100 
+
+what could be wrong -
+                    if > 80% failure_causes are not repeated then the assumption is FALSE 
+
+consequences - 
+                if my assumption fails then essentially each failure is almost a new failure and 
+                system is enable to detect it. What I can do is have a safety net that acts like a 
+                really sensitive alarm and if even the slightest way the system is performing weirdly,
+                flag this and call authorities
+
