@@ -1,0 +1,103 @@
+on day 1 you provided 6 steps from defining the decision to failure modes. 
+I didn't fully grasped the concepts and I struggled so I started to disect each and every step 
+in detail and this is what I found. 
+
+according to me there were 2+ Aha moments in this
+
+
+step 1: defind decision
+        start with the output - what am i going to do ?
+        bcoz the models are for automation and they should take some action,
+        this decision of action is a wrapper around the model and then after the action taken,
+        there will be some result or consequences, that are recorded and used as a feedback to 
+        the model and system again
+
+        the feedback loop - action defines the error cost 
+
+        structure = if [pred] > [threshold], then [system executes action]
+
+step 2: target varaiable
+        the real goal is almost always vague, hard to measure, causal
+        we need a measurable target, for that we have proxies 
+        these represent a part of the original causal goal but fixing the proxies doesn't mean
+        that you achieve the real goal, it's a small world inside the actual causal goal
+
+        to define the proxy, 3 things- 
+        metric - data
+        threshold - limits, beyond which this is anomalies
+        horizon - window of time we link to current moment 
+
+        we want to look at horizon and check the metric and ask if the threshold is crossed or not,
+        if yes then the model learn that these metrics can lead to failure
+
+
+        structure = let y=1 if [metric] is [relation value] within the next [time window] otherwise y=0
+
+
+    must pick the right threshold
+
+step 3: assumptions
+
+        assumptions are wrappers around the model with business logic
+        it's like a contract with the business logic
+        if we change the wrapper but model has no training on this part of the data,
+        we get extrapolation - model is trying to predict unseen stuff
+
+        if these fail, either wait to recover (runtime) or change everything (stationarity failure)
+        retrain the model on the new unseen data
+
+        you can only tighten the assumption, can't loosen them without changing the model
+
+        structure = the model is valid IF AND ONLY IF [condition] is TRUE (for fatal assumptions)
+        for non fatal, it's loose
+
+step 4: inputs (<= 7)
+        more data = more noise = more false positive
+        the model should be simple if needs more input then no understanding yet
+
+        inputs are selected based on causality and not correlation
+
+        correlation based inputs are enviroment specific, inputs that relates to X and Y on some specific condition
+
+        causality based inputs are mechanical, they influence the target no matter what
+
+        to check this we change the enviroment and if the relation breaks - correlation
+
+        when data is given ?
+        use domain logic to filter and look for mechanism chain - an if then statement describing how correlation correlation
+        col A forces col B to change
+
+step 5: model logic (this directly correlates to model selection in ultimate flow step 3, run a       vanila model of different families)
+
+        data has some geometry or structure hidden 
+        mathematically this can be anything but to makes things simple we simplify the model into 4 buckets - any structure mathematically will be represented as one of these 4 ways by model
+
+        1. additive
+        inputs are independent and risk is additive
+        models = linear models
+
+        2. multiplicative
+        non linear and curved geometry
+        inputs are not that risky alone but when combined, explosion
+        models = NN, svm
+
+        3. dominant
+        threshold or veto
+        1 specific col in input has the power to force the Probability shifts radically that can change the result 
+        model - decision trees, step function, RF, XGB
+
+        4. trajectory(temporal)
+        influence of an input on current risk is a function of time 
+        same events has different weights depending on when it occured
+        more recent, higher the influence
+
+        models - LSTM, transformers 
+
+        this is inductive bias - assumption of shape 
+
+        and no single model is best for all problems
+
+step 6: failure modes
+
+        Ontology of Failure. Where did this structure come from? It is not random.This hierarchy is derived from Reliability Engineering and the seminal paper "Hidden Technical Debt in Machine Learning Systems" (Sculley et al., Google, 2015). It maps the Surface Area of Risk in an ML system.Here is the technical breakdown of the 4 Levels and why Level 4 (The "Big 3") is distinct.1. The Origin of the 4 Levels (The Risk Hierarchy)The levels correspond to the Abstraction Layer where the failure occurs.Level 1 (Code / Infrastructure): The failure is in the Implementation.Source: Software Engineering.Nature: Deterministic bugs (Syntax errors, Memory leaks).Level 2 (Model / Math): The failure is in the Optimization.Source: Statistical Learning Theory.Nature: The algorithm fails to converge or generalize (Overfitting, Underfitting).Level 3 (Data / Distribution): The failure is in the Input Stream.Source: Data Engineering.Nature: The inputs change properties (Drift, Skew, Outages).Level 4 (System / Interaction): The failure is in the Feedback Loop.Source: Cybernetics and Control Theory.Nature: The model's output changes the environment, which invalidates the model's assumptions."What this means": As you move up the levels, the failure becomes harder to detect because the code runs without error, the math converges, and the data looks clean. The failure is invisible until the business collapses.2. Why "Only 3" Systemic Failure Modes?In Control Theory (Level 4), there are fundamentally only three ways a Controller (The Model) can desynchronize from the System (Reality).Mode A: The Sensor Loop Breaks (Silent Failure)Technical Name: Proxy Misalignment.The Logic: The Controller optimizes a variable ($Y_{proxy}$) that is decoupled from the actual goal ($Y_{true}$).Why it exists: We cannot measure everything. We must use proxies. Therefore, every model has a blind spot where the proxy says "Good" but reality is "Bad."Mode B: The Actuator Loop Breaks (Feedback Loop)Technical Name: Distributional Shift via Intervention.The Logic: The Controller takes an action to fix the system. That action changes the system's state. The Controller observes this new state (which it created) and mistakes it for natural behavior.Why it exists: ML models assume I.I.D. (Independent and Identically Distributed) data. But in production, data is Dependent on previous model decisions.Mode C: The Agent Loop Breaks (Adversarial)Technical Name: Campbell’s Law / Goodhart’s Law.The Logic: The System contains intelligent agents (Users/Devs) who observe the Controller. They change their behavior specifically to fool the Controller.Why it exists: Systems are not static physics (like gravity). They are Game Theoretic environments.
+

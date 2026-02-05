@@ -1,0 +1,67 @@
+the goal -- a model that predicts system failure within the next 30 days
+
+disclamier - the numbers are still bullshit, they act as placeholders
+            I've spent a day with AI understanding each of the steps in detail and so I have a bit more 
+            clear picture on how to work and what it's structure. It's not complete yet, but it will get today
+            I've done this because day 1 was soo vague and I had no clue what to do. 
+
+Step 1: defining the target
+
+        metric - the data about system health, like uptime, traffic, past failures, etc
+        threshold - 
+        horizon - next 30 mins (why ? idk)
+
+        the target proxy - Probability of failure that the traffic is > 1.5x then average within the next 3 mins
+                           or more, 
+
+
+Step 2: Atomic inputs (>= 6)
+        harware usage (RAM) 
+        server usage
+        server requests
+        the temperature of hardware and heat
+        user reporting related to system slow
+
+        bcoz all these are in causal relationship with the system's working or failure
+
+Step 3: Rewrite assumptions (<= 4)
+
+        Here by assumptions 'I' mean causal inputs with a threshold (a valid zone and danger zone)
+
+        harware usage (RAM) and server usage > 1.5 times usual threshold
+        server is handling 5x more requests then usual
+        the temperature of hardware and heat is increased by 5 degress C or more
+        user reporting related to system slow > 2x then usual
+
+        idk if these are considered infra guarantees or not 
+
+Step 4: Stress testing assumption
+
+        - server is handling 5x more requests
+        proxy - the number of requests server is handling per sec 
+        test - artificially increase the requests handled by the sever, the hardware starts to heat up,
+                the system starts to buffer, the hardware and cloud usage (if on cloud), the bill starts
+                to go up really fast, (if reporting available) the user reporting slowness goes up
+
+                (i don't think this is a valid test btw, it more like what will happen)
+
+        test2 - try a controlled dos or Ddos attack to introduce fake traffic and requesting server to
+                respond. if the server is taking more then 500ms for single request to process then it's
+                overloaded
+
+        condition - if the server is taking > 500ms for one request, then only this is valid 
+
+
+Step 5: Failure boundary statement
+
+        (i didn't really understood this one)
+        I am assuming that the load bearing assumptions, if they fail, the system dies 
+        so I am only doing this for FATAL assumptions 
+
+
+        This model (mental I assume) is valid if and only if the server response time <500ms and 
+        user are not reporting the system
+        This model becomes unreliable for the opposite case
+        This model should not be used for the opposite case
+
+        I don't think this is mental model either, I assume this step is for ML model and idk what to do for that 
