@@ -1,0 +1,19 @@
+a model needs to predict will the system fail in the next 30 days
+
+failure can be so many thing and it can be context dependent. I am assuming failure here means system gone down 
+
+1. Outcome (Target)
+    system failed but model missed predicts healthy
+
+2. Signal
+    the latency increases and system starts to become unusable 
+
+3. Assumption
+    if system is healthy, latency is controlled, maintained and below a certain threshold
+
+4. Risk
+    if latency of respose > 500ms, temporarily halt the system to inspect 
+    (here this can occur in high traffic situations but then we add servers)
+
+5. Boundary
+    the model's response is only valid for the failures that it's been trained on 

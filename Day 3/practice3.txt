@@ -1,0 +1,16 @@
+
+
+1. Outcome (Target)
+    the system failed due to an unplanned reason 
+
+2. Signal
+    if system is normal, latency doesn't increase beyond a certain normal threshold
+
+3. Assumption
+    system usually crashes if latency is higher then normal 
+
+4. Rule
+    if latency > 500 ms, intervene and inspect the system
+
+5. Boundary
+    if latency higher then normal but system is working normally and no lags, don't pause the system
