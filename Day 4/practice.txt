@@ -1,0 +1,13 @@
+
+goal - detect if the system will fail in the next 30 days 
+
+outcome - the system is down due to some unplanned reasons
+
+signals - latency
+
+Assumption - system ususally crash when the latency is higher then normal
+
+rule - if the latency > 500ms, pause and intervene
+
+boundary - if all the other physical signals like RAM, db, etc are normal and all the non physical signals  like traffic, network, etc are also normal, then only the Assumption holds 
+
