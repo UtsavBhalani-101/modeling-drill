@@ -1,0 +1,45 @@
+
+1. outcome - the orders are piled in the queue but never get shipped
+
+2. signal - is the order queue saturated beyond a point
+
+3. assumption - I assume that the signal predicts the outcome because if the queue is saturated
+                then more and more orders adding will only slow the current system down, the current
+                orders in the queue needs to be cleared first 
+
+4. rule - if the orders queue is 95% saturated, then stop taking new orders, first clear the current
+            ones in the queue, because if not then the pile will only get big, orders not shipped,
+            customer complains and refunds that we fear. COST - the new orders are on halt temporarily
+            as the queue is getting cleared
+
+5. boundary - when testing if the saturation level hits critical, does the new orders halts or not ?
+                
+
+6. decision - if the system is frozen for a particular amount of time (eg. 30 mins) send an automated
+                message that the system is frozen so that a human can fix the problem
+
+7. target - the queue getting bigger and bigger 
+
+8. assumptions - if the queue is getting bigger and bigger without any reduction, the system is either
+                frozen or dead 
+
+                the system is slow and inefficient
+
+                the system is running and sending to the warehouse API but the queue is not getting cleared
+
+
+9. signals - queue size fluctuations, is it only increasing or also decreasing
+
+            the warehouse API reciever and the queue size decreasing by same proportional
+
+            time taken by the system to process the message 
+
+10. model logic (what you said was more like a rule and model logic is the type of model used based
+                    on it's geometry, additive, multiplicative, dominant or trajectory)
+
+    rule - if the saturation of the queue is not dropping in the span of 30mins - inspect the system
+                
+11. failure modes - while testing if the system is sending alerts if the rule is broken
+
+                    on festivals and holidays the traffic is so massive online that the rule is broken
+                    without anything broken
