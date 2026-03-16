@@ -1,0 +1,55 @@
+
+goal - to detect what is causing the system to always show safe
+
+1. outcome - integrity failure - because the user is always getting safe from the backend
+            even if it's a fraud. the backend have some problem. the data recieved is incorrect
+
+2. signals - the data quality. because the data syntax changed so the system which was expecting previous
+            structure, is not getting different structure
+
+3. assumptions - 
+            Mechanistic - changing the format leads to model learning same thing differently from years to days 
+                            and that drastic shift results in the outcome
+
+            directional - the model was learning on YYYY-MM-DD, now as it's changed, the model is still interpretting it as 
+                            previous but now it's interpreting as DDMM-YY-YY (probably) and this is corrupted
+                    
+            falisifiable and local - for this specific case, the outcome can't happen without data quality being compromised. It can happen
+                            generally or Normally 
+
+            - I assume that data quality(signal) change predicts integrity failure(outcome) because data quality change leads to 
+            data corruption and model learning something completely different
+
+
+4. rules - (the rules also need to change as the previous structure is more hardware focused)
+            if data_change_rate > 2% then action -- I doubt this, I probably need new rules for this to
+
+5. boundary - idk
+
+What exact question (or mathematical calculation) are you asking that historical data to mathematically derive your threshold? (How do you define "normal" so you can alert on "abnormal"?)
+
+first collect all the abnormal events and take some buffer data before and after the event - depending on the 
+event type and context, it could be 1 day or 1 hour before crash or anything where the system was normally working
+before crash
+
+these abnormal events should not contain any holidays or festivals or any obvious days where the system is expected high 
+traffic. these should be proper anomalies 
+
+analyze all these crashes and find the average of the all the crash threshold reaches like when exactly did the system
+crashed for each event and collect all of these theresholds and average them
+
+this average can act as a threshold where the crash happening chances are high
+
+from the buffer data, analyze that when the crash happened, before the crash, how system was and where was the threshold,
+and try to find a general consensus for this also using average
+
+then use that as a guard that when the system starts reacting like this or reaching these thresholds for too long then contact 
+the humans in the loop
+
+I think the after event is not required in this one.
+
+I am assuming that the new crash will be similar to the crash happened already because if it's completely new
+and the model doesn't know about it like alien attack, then system will fail 
+
+You just nailed the exact philosophy of Site Reliability Engineering, and you explicitly called out the fundamental weakness of all predictive models: "I am assuming that the new crash will be similar to the crash happened already."If an alien attacks, your model fails. That is the correct, mature understanding of historical data. You cannot model Black Swans. You can only model history.Your logic flow is 90% perfect.Filter the noise: Remove the holidays (Applying the Boundary retroactively).Find the buffer: Look at the 60 minutes before the crash (Finding the Leading Indicator).Set the guard: Alert when the system enters that pre-crash state.But there is a mathematical flaw in your execution that will get you fired.The Fatal Flaw: Never Use "Average"You wrote: "Analyze all these crashes and find the average... try to find a general consensus for this also using average."Averages lie to engineers.Imagine your system crashed three times last year due to memory saturation.Crash 1: Died at 98% Memory.Crash 2: Died at 96% Memory.Crash 3: Died at 70% Memory (a weird memory-leak edge case).The Average crash threshold is 88%.If you set your alert at 88%, what happens when Crash 3 repeats? The server dies at 70%, your alert never fires, and you are staring at a broken system while your dashboard says "Everything is fine."The Professional Calculation: Percentiles and MinimumsWhen querying historical data to find a threshold, you do not look for the average. You use two specific mathematical limits.Method 1: The "Top-Down" Limit (Looking at Death)Instead of the average of the crashes, you look for the Minimum Fatal Threshold.The Query: "What is the lowest metric level that ever resulted in a crash?"The Logic: If the system once died at 85%, then 85% is lethal. It doesn't matter if it usually survives until 95%. You must set your threshold below the lowest known point of failure (e.g., 80%).Method 2: The "Bottom-Up" Limit (Looking at Normal)Sometimes you don't have enough crash data. (If your system is good, it rarely crashes). So you can't measure death. You have to measure Normal.The Query: You look at 30 days of perfectly healthy data (excluding holidays). You calculate the 99th Percentile ($P_{99}$).The Logic: The $P_{99}$ tells you: "99% of the time, our memory usage is below 65%." Therefore, anything above 65% is mathematically abnormal.The Threshold: You set the alert at $P_{99} + \text{Buffer}$ (e.g., 70%).
+

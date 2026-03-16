@@ -1,0 +1,15 @@
+assumption - strictly positive queue growth rate over a rolling window predicts silent worker stalls
+
+outcome - orders placed but not getting delivered to the users
+
+signal - queue_growth_rate
+
+failure window - 90 mins before fulfillment delay (the signal keeps on rising)
+normal window -  90 mins on normal situation when no failure occured (the signal is increasing and decreasing)
+
+[I kept the window size as the outcome because that would be best to actually know the outcome]
+
+falsification rule - if the assumption is valid >90% of the time before failure then only this is valid 
+
+the visual test and quantification test requires actual data and I don't have that right now
+
